@@ -3,6 +3,24 @@
   {% include head.html %}
   <body>
       {% include header.html %}
+      {% assign splitted = content | strip | split:'<h2' %}
+      {% capture table %}
+      <ul class="toc">
+      <h4>Contents</h4>
+      {% for stuff in splitted %}
+            {% assign title_hash = stuff | split:'</h2>' %}
+            {% capture tag %}
+            	<h2 {{title_hash[0]}}</h2>
+            {% endcapture %}
+            {% assign id_hack = title_hash[0] | split:'id="'%}
+            {% assign id_hacker = id_hack[1] | split:'"'%}
+            {% assign id_size = id_hacker[0] | size %}
+            {% if id_size > 0 %}
+            <a id="toc_{{id_hacker[0]}}" href="#{{id_hacker[0]}}">{{ tag | strip_html }}</a>
+            {% endif %}
+      {% endfor %}
+      </ul>
+      {% endcapture %}
       <div class="content-wrapper">
       <main class="mdl-layout__content">
         <div class="page-content">
@@ -26,7 +44,7 @@
             {% endcapture %}
             <nav id="toc" style="position: fixed" class="small-12 medium-12 large-3 columns show-for-xlarge-up">
 			  <br/>
-			  {{ content | toc }}
+			  {{ table }}
             </nav>
 
             <div class="small-12 medium-12 large-7 large-centered columns">
@@ -38,7 +56,7 @@
               </h1>
               <nav id="tocMobile" class="small-12 medium-12 large-7 columns hide-for-xlarge-up">
 
-                {{ content | toc }}
+                {{ table }}
               </nav>
               <div id="content">
                 {% if page.date %} <!-- this is a post -->
@@ -86,7 +104,31 @@
                 {% endif %}
                 {% endif %}
 
-                {{ content | content_style }}
+
+                {% for stuff in splitted %}
+                	{% assign title_hash = stuff | split:'</h2>' %}
+                	{% assign stripped = title_hash[0] | strip | size %}
+                	{% capture tag %}
+		            	<h2 {{title_hash[0]}}</h2>
+		            {% endcapture %}
+		            {% assign id_hack = title_hash[0] | split:'id="'%}
+		            {% assign id_hacker = id_hack[1] | split:'"'%}
+		            {% assign id = id_hacker[0] %}
+                	{% if stripped > 0 %}
+                	<div class="pad">
+                	<div class="mdl-card mdl-shadow--2dp large-card">
+                	<div class="mdl-card__title">
+                	<div class="anchor_fade_wrapper">
+                	<h2 class="mdl-card__title-text" {{ title_hash[0] }} <a href="#{{id}}" class="anchor">#</a></h2>
+                	</div>
+                	</div>
+                	<div class="content">
+                	{{ title_hash[1] | replace: '<table', '<table class="mdl-data-table" ' | replace: '<h3', '<h3 class="mdl-card__title-text" ' }}
+                	</div>
+                	</div>
+                	</div>
+                	{% endif %}
+                {% endfor %}
 
                 {% if page.date %}
                 <div class="pad">

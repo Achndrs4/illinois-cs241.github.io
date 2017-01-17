@@ -16,7 +16,7 @@ var params = {
       foundation: ['jquery'],
       github: ['jquery'],
       toc: ['jquery'],
-      smoothscroll: ['jquery'],
+      smoothscroll: ['jquery', 'toc'],
       textfill: ['jquery'],
       lecture: ['jquery'],
     },
